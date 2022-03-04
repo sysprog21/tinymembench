@@ -25,6 +25,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <numa.h>
 
 #include "util.h"
 
@@ -319,7 +320,8 @@ static char *align_up(char *ptr, int align)
 void *alloc_four_nonaliased_buffers(void **buf1_, int size1,
                                     void **buf2_, int size2,
                                     void **buf3_, int size3,
-                                    void **buf4_, int size4)
+                                    void **buf4_, int size4,
+                                    int numa_mode, size_t *poolbuf_sz)
 {
     char **buf1 = (char **)buf1_, **buf2 = (char **)buf2_;
     char **buf3 = (char **)buf3_, **buf4 = (char **)buf4_;
@@ -335,8 +337,15 @@ void *alloc_four_nonaliased_buffers(void **buf1_, int size1,
     if (!buf4 || size4 < 0)
         size4 = 0;
 
-    ptr = buf = 
-        (char *)malloc(size1 + size2 + size3 + size4 + 9 * ALIGN_PADDING);
+    size_t total_size = size1 + size2 + size3 + size4 + 9 * ALIGN_PADDING;
+    *poolbuf_sz = total_size;
+    if (numa_mode) {
+        ptr = buf =
+            (char *)numa_alloc_local(total_size);
+    } else {
+        ptr = buf =
+            (char *)malloc(total_size);
+    }
     memset(buf, 0xCC, size1 + size2 + size3 + size4 + 9 * ALIGN_PADDING);
 
     ptr = align_up(ptr, ALIGN_PADDING);

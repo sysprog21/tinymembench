@@ -20,7 +20,7 @@ SRC.o = $(addsuffix .o, ${SRC})
 all : ${NAME}
 
 ${NAME} : main.c version.h ${SRC.h} ${ASM.h} ${SRC.o} ${ASM.o}
-	${CC} ${CFLAGS} $< ${SRC.o} ${ASM.o} -o $@ -lm
+	${CC} ${CFLAGS} $< ${SRC.o} ${ASM.o} -o $@ -lm -lnuma
 
 asm-opt.o : %.o : %.c %.h ${ASM.h}
 	${CC} ${CFLAGS} -c $<

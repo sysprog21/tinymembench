@@ -66,6 +66,7 @@ void aligned_block_fill_shuffle64(int64_t * __restrict dst,
 void *alloc_four_nonaliased_buffers(void **buf1, int size1,
                                     void **buf2, int size2,
                                     void **buf3, int size3,
-                                    void **buf4, int size4);
+                                    void **buf4, int size4,
+                                    int numa_mode, size_t *alloc_sz);
 
 #endif
